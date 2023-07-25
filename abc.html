@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body>
+
+  Current Market value
+  <div id="mainElement">1550000</div>
+
+  Reduce Percent
+  <input type="text" value="5" id="reduce" />
+  <br />
+  Stop Loss
+  <input type="number" value="1700000" id="stop" />
+  <br />
+
+  Your Current Value
+  <input type="text" value="2000000" id="curr" />
+  <br />
+  <div id="currvalue"></div>
+  <script>
+    function randomIntFromInterval(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    var isLoopRunning = true;
+
+    function loop() {
+      if (!isLoopRunning) return;
+
+      var randomPercent = randomIntFromInterval(1, 5);
+      var randomTime = randomIntFromInterval(5, 10) * 1000;
+      var factor = 1 - randomPercent / 100;
+      var oldVal = Number(document.getElementById("mainElement").textContent.trim());
+
+      var newVal = (factor * oldVal).toFixed(2);
+      console.log({ oldVal, randomPercent, randomTime, factor, newVal });
+
+      document.getElementById("mainElement").textContent = newVal;
+
+      var recentval = update();
+     // console.log("heloo", recentval);
+
+      // Check if current value is less than stop value
+      var stop = parseFloat(document.getElementById("stop").value.trim());
+      if (parseFloat(recentval) < stop) {
+        isLoopRunning = false;
+     
+        document.getElementById("message").textContent = "You lost Bid";
+      } else {
+        setTimeout(loop, randomTime);
+      }
+    }
+
+    function update() {
+      var curr = Number(document.getElementById("curr").value.trim());
+      var reduce = Number(document.getElementById("reduce").value.trim());
+      var fact = 1 - reduce / 100;
+      var newval = (fact * curr).toFixed(2);
+
+     // console.log(newval);
+      document.getElementById("curr").value = newval;
+     // document.getElementById("currvalue").textContent = newval;
+      return newval;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      loop();
+    });
+  </script>
+
+  <div id="message"></div>
+</body>
+</html>
